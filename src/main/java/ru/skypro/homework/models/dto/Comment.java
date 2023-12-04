@@ -1,4 +1,4 @@
-package ru.skypro.homework.dto;
+package ru.skypro.homework.models.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -6,8 +6,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.util.Objects;
 
 @ToString
 @EqualsAndHashCode
@@ -38,4 +36,34 @@ public class Comment {
     @Schema(description = "текст комментария")
     @JsonProperty("text")
     private String text = null;
+
+    public Comment author(Integer author) {
+        this.author = author;
+        return this;
+    }
+
+    public Comment authorImage(String authorImage) {
+        this.authorImage = authorImage;
+        return this;
+    }
+
+    public Comment authorFirstName(String authorFirstName) {
+        this.authorFirstName = authorFirstName;
+        return this;
+    }
+
+    public Comment createdAt(Long createdAt) {
+        this.createdAt = createdAt;
+        return this;
+    }
+
+    public Comment pk(Integer pk) {
+        this.pk = pk;
+        return this;
+    }
+
+    public Comment text(String text) {
+        this.text = text;
+        return this;
+    }
 }

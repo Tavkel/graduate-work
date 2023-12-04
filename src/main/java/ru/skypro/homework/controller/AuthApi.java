@@ -12,8 +12,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import ru.skypro.homework.dto.Login;
-import ru.skypro.homework.dto.Register;
+import ru.skypro.homework.models.dto.Login;
+import ru.skypro.homework.models.dto.Register;
 
 @Validated
 public interface AuthApi {

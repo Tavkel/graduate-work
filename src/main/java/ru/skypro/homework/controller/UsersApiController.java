@@ -1,6 +1,5 @@
 package ru.skypro.homework.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,11 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.UpdateUser;
-import ru.skypro.homework.dto.User;
-import ru.skypro.homework.dto.NewPassword;
-
-import java.io.IOException;
+import ru.skypro.homework.models.dto.UpdateUser;
+import ru.skypro.homework.models.dto.User;
+import ru.skypro.homework.models.dto.NewPassword;
 
 @RestController
 @CrossOrigin(value = "http://localhost:3000")
