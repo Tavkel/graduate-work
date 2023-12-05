@@ -27,9 +27,6 @@ public interface UsersApi {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json",
                     schema = @Schema(implementation = User.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
-    @RequestMapping(value = "/users/me",
-            produces = {"application/json"},
-            method = RequestMethod.GET)
     ResponseEntity<User> getUser();
 
 

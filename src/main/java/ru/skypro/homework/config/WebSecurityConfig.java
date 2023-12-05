@@ -47,8 +47,8 @@ public class WebSecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(AUTH_WHITELIST).permitAll()
-                        .requestMatchers("/ads/**", "/users/**").authenticated())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        .requestMatchers("/ads/**", "/users/**").authenticated()
+                        .anyRequest().hasAnyRole("USER","ADMIN"))
                 .cors(withDefaults())
                 .httpBasic(withDefaults())
                 .build();

@@ -5,11 +5,11 @@ import ru.skypro.homework.models.dto.Comment;
 import ru.skypro.homework.models.dto.CreateOrUpdateComment;
 
 public class CommentMapper {
-    public static CommentDomain createOrUpdateCommentToCommentDomain(CreateOrUpdateComment dto) {
+    public static CommentDomain createOrUpdateCommentToCommentDomain(CreateOrUpdateComment dto, CommentDomain model) {
         if (dto == null) {
             throw new IllegalArgumentException("Tried to map null to CommentDomain");
         }
-        return new CommentDomain()
+        return model
                 .text(dto.getText());
     }
 

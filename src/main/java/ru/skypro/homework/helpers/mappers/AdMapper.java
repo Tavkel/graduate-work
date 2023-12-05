@@ -6,11 +6,14 @@ import ru.skypro.homework.models.dto.CreateOrUpdateAd;
 import ru.skypro.homework.models.dto.ExtendedAd;
 
 public class AdMapper {
-    public static AdDomain createOrUpdateAdToAdDomain(CreateOrUpdateAd dto) {
+    public static AdDomain createOrUpdateAdToAdDomain(CreateOrUpdateAd dto, AdDomain model) {
         if (dto == null) {
             throw new IllegalArgumentException("Tried to map null to AdDomain");
         }
-        return new AdDomain()
+        if (model == null) {
+            model = new AdDomain();
+        }
+        return model
                 .title(dto.getTitle())
                 .description(dto.getDescription())
                 .price(dto.getPrice());

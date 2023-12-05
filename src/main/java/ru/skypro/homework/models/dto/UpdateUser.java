@@ -33,4 +33,19 @@ public class UpdateUser {
     @Pattern(regexp = "\\+7\\s?\\(?\\d{3}\\)?\\s?\\d{3}-?\\d{2}-?\\d{2}")
     @JsonProperty("phone")
     private String phone = null;
+
+    public UpdateUser firstName(String firstName) {
+        this.firstName = firstName;
+        return this;
+    }
+
+    public UpdateUser lastName(String lastName) {
+        this.lastName = lastName;
+        return this;
+    }
+
+    public UpdateUser phone(String phone) {
+        this.phone = phone;
+        return this;
+    }
 }
