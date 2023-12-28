@@ -14,6 +14,7 @@ import ru.skypro.homework.service.CommentService;
 import ru.skypro.homework.service.UserService;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.NoSuchElementException;
 
 @Service
@@ -55,7 +56,10 @@ public class CommentServiceImpl implements CommentService {
 
     private CommentDomain createComment(CreateOrUpdateComment comment) {
         var result = CommentMapper.createOrUpdateCommentToCommentDomain(comment);
-        return result.createdAt(LocalDateTime.now().toEpochSecond())
+        return result.createdAt(LocalDateTime.now().toEpochSecond(
+                ZoneId.systemDefault()
+                        .getRules()
+                        .getOffset(LocalDateTime.now())) * 1000);
     }
 
     private CommentDomain updateComment(CreateOrUpdateComment comment, Integer id) {
