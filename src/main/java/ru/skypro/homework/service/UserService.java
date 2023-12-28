@@ -1,7 +1,7 @@
 package ru.skypro.homework.service;
 
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.models.AuditableEntity;
+import ru.skypro.homework.models.OwnedEntity;
 import ru.skypro.homework.models.domain.UserDomain;
 import ru.skypro.homework.models.dto.NewPassword;
 import ru.skypro.homework.models.dto.UpdateUser;
@@ -14,5 +14,5 @@ public interface UserService {
     void updateUserPassword(NewPassword password);
     void updateAvatar(MultipartFile file);
     Integer getUserId();
-    boolean isActionAllowed(AuditableEntity entity);
+    boolean isActionAllowed(OwnedEntity entity);
 }

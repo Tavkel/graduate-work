@@ -42,8 +42,8 @@ public class UsersApiController implements UsersApi {
         return new ResponseEntity<>(userService.updateUser(body), HttpStatus.OK);
     }
 
-    public ResponseEntity<Void> updateUserImage(@RequestPart("file") MultipartFile image) {
-        //todo implement image
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<Void> updateUserImage(@RequestPart MultipartFile image) {
+        userService.updateAvatar(image);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

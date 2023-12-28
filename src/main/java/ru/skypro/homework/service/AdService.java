@@ -13,6 +13,8 @@ public interface AdService {
     ExtendedAd getAd(Integer id);
     AdDomain getAdDomain(Integer id);
     void deleteAd(Integer id);
-    Ad createOrUpdateAd(CreateOrUpdateAd ad, Integer id);
-    byte[] updateImage(MultipartFile file);
+    Ad createAd(CreateOrUpdateAd ad, MultipartFile image);
+    Ad updateAd(CreateOrUpdateAd ad, Integer id);
+
+    byte[] updateImage(Integer id, MultipartFile file);
 }

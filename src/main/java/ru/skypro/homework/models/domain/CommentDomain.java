@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.skypro.homework.models.AuditableEntity;
+import ru.skypro.homework.models.OwnedEntity;
 
 @Entity
 @ToString
@@ -13,7 +13,7 @@ import ru.skypro.homework.models.AuditableEntity;
 @Getter
 @Setter
 @Table(name = "comments")
-public class CommentDomain implements AuditableEntity {
+public class CommentDomain implements OwnedEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

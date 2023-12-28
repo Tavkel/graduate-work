@@ -5,7 +5,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.skypro.homework.models.AuditableEntity;
+import ru.skypro.homework.models.EntityWithImage;
+import ru.skypro.homework.models.OwnedEntity;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
 @Setter
 @Getter
 @Table(name = "ads")
-public class AdDomain implements AuditableEntity {
+public class AdDomain implements OwnedEntity, EntityWithImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

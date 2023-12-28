@@ -13,6 +13,7 @@ import ru.skypro.homework.service.AdService;
 import ru.skypro.homework.service.CommentService;
 import ru.skypro.homework.service.UserService;
 
+import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
 @Service
@@ -53,7 +54,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private CommentDomain createComment(CreateOrUpdateComment comment) {
-        return CommentMapper.createOrUpdateCommentToCommentDomain(comment);
+        var result = CommentMapper.createOrUpdateCommentToCommentDomain(comment);
+        return result.createdAt(LocalDateTime.now().toEpochSecond())
     }
 
     private CommentDomain updateComment(CreateOrUpdateComment comment, Integer id) {

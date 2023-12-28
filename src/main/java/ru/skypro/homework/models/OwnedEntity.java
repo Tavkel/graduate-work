@@ -1,5 +1,5 @@
 package ru.skypro.homework.models;
 
-public interface AuditableEntity {
+public interface OwnedEntity {
     Integer getOwnerId();
 }

@@ -1,9 +1,6 @@
 package ru.skypro.homework.controller;
 
 import jakarta.validation.Valid;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -35,8 +32,7 @@ public class AdsApiController implements AdsApi {
             method = RequestMethod.POST)
     public ResponseEntity<Ad> addAd(CreateOrUpdateAd properties,
                                     MultipartFile image) {
-        //todo implement image handling
-        var result = adService.createOrUpdateAd(properties, 0);
+        var result = adService.createAd(properties, image);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -53,7 +49,6 @@ public class AdsApiController implements AdsApi {
             method = RequestMethod.DELETE)
     public ResponseEntity<Void> deleteComment(@PathVariable Integer adId,
                                               @PathVariable Integer commentId) {
-        //todo dopilit
         commentService.deleteComment(commentId, adId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -62,7 +57,6 @@ public class AdsApiController implements AdsApi {
             produces = {"application/json"},
             method = RequestMethod.GET)
     public ResponseEntity<ExtendedAd> getAds(@PathVariable Integer id) {
-
         return new ResponseEntity<>(adService.getAd(id), HttpStatus.OK);
     }
 
@@ -100,15 +94,15 @@ public class AdsApiController implements AdsApi {
             method = RequestMethod.PATCH)
     public ResponseEntity<Ad> updateAds(@PathVariable Integer id,
                                         @RequestBody CreateOrUpdateAd payload) {
-        return new ResponseEntity<>(adService.createOrUpdateAd(payload, id), HttpStatus.OK);
+        return new ResponseEntity<>(adService.updateAd(payload, id), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/ads/{adId}/comments/{commentId}",
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.PATCH)
-    public ResponseEntity<Comment> updateComment(@PathVariable("adId") Integer adId,
-                                                 @PathVariable("commentId") Integer commentId,
+    public ResponseEntity<Comment> updateComment(@PathVariable Integer adId,
+                                                 @PathVariable Integer commentId,
                                                  @RequestBody CreateOrUpdateComment payload) {
         return new ResponseEntity<>(commentService.createOrUpdateComment(payload, commentId, adId), HttpStatus.OK);
     }
@@ -117,11 +111,9 @@ public class AdsApiController implements AdsApi {
             produces = {"application/octet-stream"},
             consumes = {"multipart/form-data"},
             method = RequestMethod.PATCH)
-    public ResponseEntity<String> updateImage(@Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
-                                              @PathVariable("id") Integer id,
-                                              @Parameter(description = "file detail")
+    public ResponseEntity<String> updateImage(@PathVariable Integer id,
                                               @Valid
-                                              @RequestPart("file") MultipartFile image) {
-        return new ResponseEntity<>(Arrays.toString(adService.updateImage(image)), HttpStatus.OK);
+                                              MultipartFile image) {
+        return new ResponseEntity<>(Arrays.toString(adService.updateImage(id, image)), HttpStatus.OK);
     }
 }

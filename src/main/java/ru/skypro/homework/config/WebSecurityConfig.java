@@ -46,8 +46,10 @@ public class WebSecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/ads/**", "/users/**").authenticated()
                         .requestMatchers(AUTH_WHITELIST).permitAll()
-                        .requestMatchers("/ads/**", "/users/**").authenticated())
+                        .anyRequest().permitAll()
+                )
                 .cors(withDefaults())
                 .httpBasic(withDefaults())
                 .build();

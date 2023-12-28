@@ -146,6 +146,6 @@ public interface AdsApi {
                                        @PathVariable("id") Integer id,
                                        @Parameter(description = "file detail")
                                        @Valid
-                                       @RequestPart("file") MultipartFile image);
+                                       @RequestPart("image") MultipartFile image);
 }
 
