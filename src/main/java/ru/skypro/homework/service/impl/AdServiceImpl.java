@@ -3,6 +3,7 @@ package ru.skypro.homework.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.skypro.homework.exceptions.ActionForbiddenException;
 import ru.skypro.homework.helpers.mappers.AdMapper;
 import ru.skypro.homework.models.domain.AdDomain;
 import ru.skypro.homework.models.dto.Ad;
@@ -33,11 +34,8 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
-    public Ads getMyAds(Integer userId) {
-        //todo replace stub
-        userId  = 1;
-
-        var ads = repository.findByUserId(userId).stream().map(AdMapper::adDomainToAd).toList();
+    public Ads getMyAds() {
+        var ads = repository.findByUserId(userService.getUserId()).stream().map(AdMapper::adDomainToAd).toList();
         return new Ads(ads.size(), ads);
     }
 
@@ -60,31 +58,47 @@ public class AdServiceImpl implements AdService {
             log.info("Ad with id {} was not found", id);
             return new NoSuchElementException("Ad not found");
         });
+
+        if(!userService.isActionAllowed(ad)) throw new ActionForbiddenException();
+
         repository.delete(ad);
     }
 
     @Override
     public Ad createOrUpdateAd(CreateOrUpdateAd ad, Integer id) {
-        AdDomain model = null;
+        AdDomain model;
         if (id != null && id != 0) {
-            model = repository.findById(id).orElseThrow(() -> {
-                log.info("Ad with id {} was not found", id);
-                return new NoSuchElementException("Ad not found");
-            });
+            model = updateAd(ad, id);
+        } else {
+            model = createAd(ad);
         }
-        model = AdMapper.createOrUpdateAdToAdDomain(ad, model);
 
-        //todo replace stub
-        var user = userService.getUserDomain(1);
-        model.setUser(user);
+        model.setUser(userService.getUserDomain());
 
         var result = repository.save(model);
         return AdMapper.adDomainToAd(result);
     }
 
+    private AdDomain createAd(CreateOrUpdateAd ad){
+        return AdMapper.createOrUpdateAdToAdDomain(ad);
+    }
+
+    private AdDomain updateAd(CreateOrUpdateAd ad, Integer id){
+        var model = repository.findById(id).orElseThrow(() -> {
+            log.info("Ad with id {} was not found", id);
+            return new NoSuchElementException("Ad not found");
+        });
+
+        if(!userService.isActionAllowed(model)) throw new ActionForbiddenException();
+
+        return model.title(ad.getTitle())
+                .description(ad.getDescription())
+                .price(ad.getPrice());
+    }
+
     @Override
     public byte[] updateImage(MultipartFile file) {
-        //todo implement
+        //todo implement image
         return new byte[0];
     }
 }

@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import ru.skypro.homework.models.AuditableEntity;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
 @Setter
 @Getter
 @Table(name = "ads")
-public class AdDomain {
+public class AdDomain implements AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -64,5 +65,9 @@ public class AdDomain {
     public AdDomain description(String description) {
         this.description = description;
         return this;
+    }
+
+    public Integer getOwnerId() {
+        return user.getId();
     }
 }

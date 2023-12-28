@@ -1,18 +1,23 @@
 package ru.skypro.homework.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.helpers.mappers.UserMapper;
+import ru.skypro.homework.models.AuditableEntity;
 import ru.skypro.homework.models.domain.UserDomain;
 import ru.skypro.homework.models.dto.NewPassword;
 import ru.skypro.homework.models.dto.UpdateUser;
 import ru.skypro.homework.models.dto.User;
+import ru.skypro.homework.models.enums.Roles;
 import ru.skypro.homework.repositories.UserRepository;
+import ru.skypro.homework.security.CustomUserDetails;
 import ru.skypro.homework.service.UserService;
 
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -26,22 +31,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(Integer id) {
-        return UserMapper.userDomainToUser(getUserDomain(id));
+    public User getUser() {
+        return UserMapper.userDomainToUser(getUserDomain());
     }
 
     @Override
-    public UserDomain getUserDomain(Integer id) {
-        return repository.findById(id).orElseThrow(() -> {
-            log.info("User with id {} was not found", id);
-            return new NoSuchElementException("User not found");
-        });
+    public UserDomain getUserDomain() {
+        var principal = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return principal.getUser();
     }
 
     @Override
     public UpdateUser updateUser(UpdateUser user) {
-        //todo remove stub
-        var model = repository.findById(1).orElseThrow(() -> {
+        var model = repository.findById(getUserId()).orElseThrow(() -> {
             log.info("User with id {} was not found", 1);
             return new NoSuchElementException("User not found");
         });
@@ -54,8 +56,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUserPassword(NewPassword password) {
-        //todo remove stub
-        var model = repository.findById(1).orElseThrow(() -> {
+        var model = repository.findById(getUserId()).orElseThrow(() -> {
             log.info("User with id {} was not found", 1);
             return new NoSuchElementException("User not found");
         });
@@ -66,5 +67,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateAvatar(MultipartFile file) {
         //todo implement
+    }
+
+    @Override
+    public Integer getUserId(){
+        var user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return user.getId();
+    }
+
+    @Override
+    public boolean isActionAllowed(AuditableEntity entity){
+        return Objects.equals(getUserId(), entity.getOwnerId()) ||
+                getUser().getRole() == Roles.ADMIN;
     }
 }
