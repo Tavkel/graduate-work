@@ -44,6 +44,12 @@ public class ImageServiceImpl implements ImageService {
         return filePath;
     }
 
+    @Override
+    public void deleteImage(String filename, String subPath) throws IOException {
+        Path filePath = Path.of(imageDirectory, subPath, filename);
+        Files.deleteIfExists(filePath);
+    }
+
     private String getExtension(String filename) {
         return filename.substring(filename.lastIndexOf('.'));
     }

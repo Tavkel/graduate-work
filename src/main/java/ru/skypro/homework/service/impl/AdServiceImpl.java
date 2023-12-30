@@ -65,6 +65,13 @@ public class AdServiceImpl implements AdService {
 
         if (!userService.isActionAllowed(ad)) throw new ActionForbiddenException();
 
+        var filename = ad.getImageUrl().substring(ad.getImageUrl().lastIndexOf("/") + 1);
+        try {
+            imageService.deleteImage(filename, AdDomain.class.getSimpleName());
+        } catch (IOException e) {
+            throw new RuntimeException(e); //todo specify exception
+        }
+
         repository.delete(ad);
     }
 

@@ -6,15 +6,17 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
+import java.io.File;
 
 @Configuration
 @EnableWebMvc
 public class MvcConfig implements WebMvcConfigurer {
-    //todo выяснить что и как делать с этим в условиях докера. Можно ли как-то выяснить в какой среде (контейнер или ОС) запущено приложение.
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        String location = "file:" + new File("images").getAbsolutePath().replace("\\", "/") +"/";
+
         registry.addResourceHandler("/content/**")
-                .addResourceLocations("file:src/main/resources/images/AdDomain/", "file:src/main/resources/images/UserDomain/")
+                .addResourceLocations(location + "AdDomain/", location + "UserDomain/")
                 .resourceChain(true)
                 .addResolver(new PathResourceResolver());
     }
