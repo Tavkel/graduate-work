@@ -14,5 +14,4 @@ public interface UserService {
     void updateUserPassword(NewPassword password);
     void updateAvatar(MultipartFile file);
     Integer getUserId();
-    boolean isActionAllowed(OwnedEntity entity);
 }

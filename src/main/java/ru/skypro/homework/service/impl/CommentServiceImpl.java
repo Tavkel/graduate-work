@@ -9,6 +9,7 @@ import ru.skypro.homework.models.dto.Comment;
 import ru.skypro.homework.models.dto.Comments;
 import ru.skypro.homework.models.dto.CreateOrUpdateComment;
 import ru.skypro.homework.repositories.CommentRepository;
+import ru.skypro.homework.security.utility.PermissionChecker;
 import ru.skypro.homework.service.AdService;
 import ru.skypro.homework.service.CommentService;
 import ru.skypro.homework.service.UserService;
@@ -68,7 +69,8 @@ public class CommentServiceImpl implements CommentService {
             return new NoSuchElementException("Comment not found");
         });
 
-        if(!userService.isActionAllowed(model)) throw new ActionForbiddenException();
+        var user = userService.getUserDomain();
+        if (!PermissionChecker.isActionAllowed(user, model)) throw new ActionForbiddenException();
 
         return model.text(comment.getText());
     }
@@ -80,7 +82,8 @@ public class CommentServiceImpl implements CommentService {
             return new NoSuchElementException("Comment not found");
         });
 
-        if(!userService.isActionAllowed(comment)) throw new ActionForbiddenException();
+        var user = userService.getUserDomain();
+        if (!PermissionChecker.isActionAllowed(user, comment)) throw new ActionForbiddenException();
 
         repository.delete(comment);
     }

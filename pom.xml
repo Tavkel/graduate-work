@@ -76,6 +76,12 @@
             <artifactId>liquibase-core</artifactId>
             <version>4.22.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>5.3</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

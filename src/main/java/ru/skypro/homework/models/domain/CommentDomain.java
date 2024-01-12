@@ -1,15 +1,13 @@
 package ru.skypro.homework.models.domain;
 
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import ru.skypro.homework.models.OwnedEntity;
 
+import java.util.Objects;
+
 @Entity
-@ToString
-@EqualsAndHashCode
 @Getter
 @Setter
 @Table(name = "comments")
@@ -56,5 +54,27 @@ public class CommentDomain implements OwnedEntity {
 
     public Integer getOwnerId() {
         return user.getId();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CommentDomain that = (CommentDomain) o;
+        return Objects.equals(createdAt, that.createdAt) && Objects.equals(text, that.text);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(createdAt, text);
+    }
+
+    @Override
+    public String toString() {
+        return "CommentDomain{" +
+                "id=" + id +
+                ", createdAt=" + createdAt +
+                ", text='" + text + '\'' +
+                '}';
     }
 }

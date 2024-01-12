@@ -6,12 +6,12 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-import java.util.Objects;
-
 @ToString
 @EqualsAndHashCode
 @Setter
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CreateOrUpdateComment {
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "текст комментария")
     @NotNull

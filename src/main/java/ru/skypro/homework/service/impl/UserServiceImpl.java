@@ -78,10 +78,4 @@ public class UserServiceImpl implements UserService {
         var user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return user.getId();
     }
-
-    @Override
-    public boolean isActionAllowed(OwnedEntity entity) {
-        return Objects.equals(getUserId(), entity.getOwnerId()) ||
-                getUser().getRole() == Roles.ADMIN;
-    }
 }

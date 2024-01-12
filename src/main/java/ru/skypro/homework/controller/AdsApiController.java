@@ -56,7 +56,7 @@ public class AdsApiController implements AdsApi {
     @RequestMapping(value = "/ads/{id}",
             produces = {"application/json"},
             method = RequestMethod.GET)
-    public ResponseEntity<ExtendedAd> getAds(@PathVariable Integer id) {
+    public ResponseEntity<ExtendedAd> getExtendedAd(@PathVariable Integer id) {
         return new ResponseEntity<>(adService.getAd(id), HttpStatus.OK);
     }
 
@@ -83,7 +83,7 @@ public class AdsApiController implements AdsApi {
 
     @RequestMapping(value = "/ads/{id}",
             method = RequestMethod.DELETE)
-    public ResponseEntity<Void> removeAd(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteAd(@PathVariable Integer id) {
         adService.deleteAd(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }

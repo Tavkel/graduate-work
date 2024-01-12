@@ -23,7 +23,7 @@ public interface AdsApi {
     @Operation(summary = "Добавление объявления", description = "", tags = {"Объявления"})
     //спасибо сваггеру за нерабочие реквесты
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Created", content = @Content(
+            @ApiResponse(responseCode = "200", description = "Created", content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = Ad.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     ResponseEntity<Ad> addAd(@Valid
@@ -66,7 +66,7 @@ public interface AdsApi {
                             schema = @Schema(implementation = ExtendedAd.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "404", description = "Not found")})
-    ResponseEntity<ExtendedAd> getAds(@Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
+    ResponseEntity<ExtendedAd> getExtendedAd(@Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
                                       @PathVariable("id") Integer id);
 
 
@@ -101,7 +101,7 @@ public interface AdsApi {
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "Not found")})
-    ResponseEntity<Void> removeAd(@Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
+    ResponseEntity<Void> deleteAd(@Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
                                   @PathVariable("id") Integer id);
 
 
