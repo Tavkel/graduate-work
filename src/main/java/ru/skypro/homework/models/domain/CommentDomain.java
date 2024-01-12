@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import ru.skypro.homework.models.OwnedEntity;
 
 @Entity
 @ToString
@@ -12,7 +13,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @Table(name = "comments")
-public class CommentDomain {
+public class CommentDomain implements OwnedEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -51,5 +52,9 @@ public class CommentDomain {
     public CommentDomain text(String text) {
         this.text = text;
         return this;
+    }
+
+    public Integer getOwnerId() {
+        return user.getId();
     }
 }

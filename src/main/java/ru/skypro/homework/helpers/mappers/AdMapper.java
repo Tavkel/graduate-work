@@ -10,6 +10,7 @@ public class AdMapper {
         if (dto == null) {
             throw new IllegalArgumentException("Tried to map null to AdDomain");
         }
+
         return new AdDomain()
                 .title(dto.getTitle())
                 .description(dto.getDescription())

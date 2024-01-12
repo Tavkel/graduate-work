@@ -9,8 +9,7 @@ public class CommentMapper {
         if (dto == null) {
             throw new IllegalArgumentException("Tried to map null to CommentDomain");
         }
-        return new CommentDomain()
-                .text(dto.getText());
+        return new CommentDomain().text(dto.getText());
     }
 
     public static Comment commentDomainToComment (CommentDomain model) {

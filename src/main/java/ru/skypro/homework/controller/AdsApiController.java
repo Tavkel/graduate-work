@@ -1,146 +1,119 @@
 package ru.skypro.homework.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Schema;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.models.dto.*;
+import ru.skypro.homework.service.AdService;
+import ru.skypro.homework.service.CommentService;
 
 
-import java.util.List;
+import java.util.Arrays;
 
 @RestController
 @CrossOrigin(value = "http://localhost:3000")
+@Slf4j
 public class AdsApiController implements AdsApi {
-    private static final Logger logger = LoggerFactory.getLogger(AdsApiController.class);
-    private final ObjectMapper objectMapper;
-    private final HttpServletRequest request;
-    @org.springframework.beans.factory.annotation.Autowired
-    public AdsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
-        this.objectMapper = objectMapper;
-        this.request = request;
+    private final AdService adService;
+    private final CommentService commentService;
+
+    public AdsApiController(AdService adService, CommentService commentService) {
+        this.adService = adService;
+        this.commentService = commentService;
     }
 
     @RequestMapping(value = "/ads",
-            produces = {"application/json"},
-            consumes = {"multipart/form-data"},
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             method = RequestMethod.POST)
-    public ResponseEntity<Ad> addAd(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema())
-                                    @RequestParam(value = "properties", required = false) CreateOrUpdateAd properties,
-                                    @Parameter(description = "file detail")
-                                    @Valid
-                                    @RequestPart("file") MultipartFile image) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<Ad> addAd(CreateOrUpdateAd properties,
+                                    MultipartFile image) {
+        var result = adService.createAd(properties, image);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/ads/{id}/comments",
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.POST)
-    public ResponseEntity<Comment> addComment(@Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
-                                              @PathVariable("id") Integer id,
-                                              @Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema())
-                                              @Valid
-                                              @RequestBody CreateOrUpdateComment body) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<Comment> addComment(@PathVariable("id") Integer adId,
+                                              CreateOrUpdateComment comment) {
+        return new ResponseEntity<>(commentService.createOrUpdateComment(comment, 0, adId), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/ads/{adId}/comments/{commentId}",
             method = RequestMethod.DELETE)
-    public ResponseEntity<Void> deleteComment(@Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
-                                              @PathVariable("adId") Integer adId,
-                                              @Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
-                                              @PathVariable("commentId") Integer commentId) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<Void> deleteComment(@PathVariable Integer adId,
+                                              @PathVariable Integer commentId) {
+        commentService.deleteComment(commentId, adId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/ads/{id}",
             produces = {"application/json"},
             method = RequestMethod.GET)
-    public ResponseEntity<ExtendedAd> getAds(@Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
-                                             @PathVariable("id") Integer id) {
-        var result = new ExtendedAd();
-        result.setPk(id);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+    public ResponseEntity<ExtendedAd> getAds(@PathVariable Integer id) {
+        return new ResponseEntity<>(adService.getAd(id), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/ads/me",
             produces = {"application/json"},
             method = RequestMethod.GET)
     public ResponseEntity<Ads> getAdsMe() {
-        var result = new Ads();
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(adService.getMyAds(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/ads",
             produces = {"application/json"},
             method = RequestMethod.GET)
     public ResponseEntity<Ads> getAllAds() {
-        var result = new Ads();
-        result.setCount(0);
-        result.setResults(List.of());
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(adService.getAllAds(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/ads/{id}/comments",
             produces = {"application/json"},
             method = RequestMethod.GET)
-    public ResponseEntity<Comments> getComments(@Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
-                                                @PathVariable("id") Integer id) {
-        var result = new Comments();
-        return new ResponseEntity<>(result, HttpStatus.OK);
+    public ResponseEntity<Comments> getComments(@PathVariable Integer id) {
+        return new ResponseEntity<>(commentService.getCommentsForAd(id), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/ads/{id}",
             method = RequestMethod.DELETE)
-    public ResponseEntity<Void> removeAd(@Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
-                                         @PathVariable("id") Integer id) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<Void> removeAd(@PathVariable Integer id) {
+        adService.deleteAd(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/ads/{id}",
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.PATCH)
-    public ResponseEntity<Ad> updateAds(@Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
-                                        @PathVariable("id") Integer id,
-                                        @Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema())
-                                        @Valid
-                                        @RequestBody CreateOrUpdateAd body) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<Ad> updateAds(@PathVariable Integer id,
+                                        @RequestBody CreateOrUpdateAd payload) {
+        return new ResponseEntity<>(adService.updateAd(payload, id), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/ads/{adId}/comments/{commentId}",
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.PATCH)
-    public ResponseEntity<Comment> updateComment(@Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
-                                                 @PathVariable("adId") Integer adId,
-                                                 @Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
-                                                 @PathVariable("commentId") Integer commentId,
-                                                 @Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema())
-                                                 @Valid
-                                                 @RequestBody CreateOrUpdateComment body) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<Comment> updateComment(@PathVariable Integer adId,
+                                                 @PathVariable Integer commentId,
+                                                 @RequestBody CreateOrUpdateComment payload) {
+        return new ResponseEntity<>(commentService.createOrUpdateComment(payload, commentId, adId), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/ads/{id}/image",
             produces = {"application/octet-stream"},
             consumes = {"multipart/form-data"},
             method = RequestMethod.PATCH)
-    public ResponseEntity<List<byte[]>> updateImage(@Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
-                                                    @PathVariable("id") Integer id,
-                                                    @Parameter(description = "file detail")
-                                                    @Valid
-                                                    @RequestPart("file") MultipartFile image) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<String> updateImage(@PathVariable Integer id,
+                                              @Valid
+                                              MultipartFile image) {
+        return new ResponseEntity<>(Arrays.toString(adService.updateImage(id, image)), HttpStatus.OK);
     }
 }
