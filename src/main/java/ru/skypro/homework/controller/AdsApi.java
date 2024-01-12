@@ -5,37 +5,32 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.*;
 
 import jakarta.validation.Valid;
-
-import java.util.List;
+import ru.skypro.homework.models.dto.*;
 
 @Validated
 public interface AdsApi {
 
     @Operation(summary = "Добавление объявления", description = "", tags = {"Объявления"})
+    //спасибо сваггеру за нерабочие реквесты
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Created", content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = Ad.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
-    ResponseEntity<Ad> addAd(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema())
-                             @RequestParam(value = "properties", required = false) CreateOrUpdateAd properties,
-                             @Parameter(description = "file detail")
-                             @Valid
-                             @RequestPart("file") MultipartFile image);
+    ResponseEntity<Ad> addAd(@Valid
+                             @RequestPart(value = "properties")
+                             CreateOrUpdateAd properties,
+                             @RequestPart("image")
+                             MultipartFile image);
 
 
     @Operation(summary = "Добавление комментария к объявлению", description = "", tags = {"Комментарии"})
@@ -143,14 +138,14 @@ public interface AdsApi {
     @Operation(summary = "Обновление картинки объявления", description = "", tags = {"Объявления"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/octet-stream",
-                    array = @ArraySchema(schema = @Schema(implementation = byte[].class)))),
+                    schema = @Schema(implementation = byte[].class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "Not found")})
-    ResponseEntity<List<byte[]>> updateImage(@Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
-                                             @PathVariable("id") Integer id,
-                                             @Parameter(description = "file detail")
-                                             @Valid
-                                             @RequestPart("file") MultipartFile image);
+    ResponseEntity<String> updateImage(@Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
+                                       @PathVariable("id") Integer id,
+                                       @Parameter(description = "file detail")
+                                       @Valid
+                                       @RequestPart("image") MultipartFile image);
 }
 

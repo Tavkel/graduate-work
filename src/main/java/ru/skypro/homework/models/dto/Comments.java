@@ -1,30 +1,29 @@
-package ru.skypro.homework.dto;
+package ru.skypro.homework.models.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import jakarta.validation.Valid;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 /**
- * Ads
+ * Comments
  */
 @ToString
 @EqualsAndHashCode
 @Setter
 @Getter
 @Validated
-public class Ads {
-    @Schema(description = "общее количество объявлений")
+@AllArgsConstructor
+@NoArgsConstructor
+public class Comments {
+    @Schema(description = "общее количество комментариев")
     @JsonProperty("count")
     private Integer count = null;
 
     @Schema(description = "")
     @JsonProperty("results")
     @Valid
-    private List<Ad> results = null;
+    private List<Comment> results = null;
 }

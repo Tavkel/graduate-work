@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: db/changesets/users.sql
+  - include:
+      file: db/changesets/ads.sql
+  - include:
+      file: db/changesets/comments.sql

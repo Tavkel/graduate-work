@@ -1,4 +1,4 @@
-package ru.skypro.homework.dto;
+package ru.skypro.homework.models.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -31,4 +31,29 @@ public class Ad {
     @Schema(description = "заголовок объявления")
     @JsonProperty("title")
     private String title = null;
+
+    public Ad author(Integer author) {
+        this.author = author;
+        return this;
+    }
+
+    public Ad image(String image) {
+        this.image = image;
+        return this;
+    }
+
+    public Ad pk(Integer pk) {
+        this.pk = pk;
+        return this;
+    }
+
+    public Ad price(Integer price) {
+        this.price = price;
+        return this;
+    }
+
+    public Ad title(String title) {
+        this.title = title;
+        return this;
+    }
 }

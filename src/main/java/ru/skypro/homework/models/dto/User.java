@@ -1,14 +1,13 @@
-package ru.skypro.homework.dto;
+package ru.skypro.homework.models.dto;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.validation.annotation.Validated;
+import ru.skypro.homework.models.enums.Roles;
 
 /**
  * User
@@ -39,42 +38,46 @@ public class User {
     @JsonProperty("phone")
     private String phone = null;
 
-    /**
-     * роль пользователя
-     */
-    public enum RoleEnum {
-        USER("USER"),
-
-        ADMIN("ADMIN");
-
-        private String value;
-
-        RoleEnum(String value) {
-            this.value = value;
-        }
-
-        @Override
-        @JsonValue
-        public String toString() {
-            return String.valueOf(value);
-        }
-
-        @JsonCreator
-        public static RoleEnum fromValue(String text) {
-            for (RoleEnum b : RoleEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
-                    return b;
-                }
-            }
-            return null;
-        }
-    }
-
     @Schema(description = "роль пользователя")
     @JsonProperty("role")
-    private RoleEnum role = null;
+    private Roles role = null;
 
     @Schema(description = "ссылка на аватар пользователя")
     @JsonProperty("image")
     private String image = null;
+
+    public User id(Integer id) {
+        this.id = id;
+        return this;
+    }
+
+    public User email(String email) {
+        this.email = email;
+        return this;
+    }
+
+    public User firstName(String firstName) {
+        this.firstName = firstName;
+        return this;
+    }
+
+    public User lastName(String lastName) {
+        this.lastName = lastName;
+        return this;
+    }
+
+    public User phone(String phone) {
+        this.phone = phone;
+        return this;
+    }
+
+    public User role(Roles role) {
+        this.role = role;
+        return this;
+    }
+
+    public User image(String image) {
+        this.image = image;
+        return this;
+    }
 }

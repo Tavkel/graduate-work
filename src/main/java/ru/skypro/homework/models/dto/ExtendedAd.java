@@ -1,6 +1,4 @@
-package ru.skypro.homework.dto;
-
-import java.util.Objects;
+package ru.skypro.homework.models.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -54,4 +52,49 @@ public class ExtendedAd {
     @Schema(description = "заголовок объявления")
     @JsonProperty("title")
     private String title = null;
+
+    public ExtendedAd pk(Integer pk) {
+        this.pk = pk;
+        return this;
+    }
+
+    public ExtendedAd authorFirstName(String authorFirstName) {
+        this.authorFirstName = authorFirstName;
+        return this;
+    }
+
+    public ExtendedAd authorLastName(String authorLastName) {
+        this.authorLastName = authorLastName;
+        return this;
+    }
+
+    public ExtendedAd description(String description) {
+        this.description = description;
+        return this;
+    }
+
+    public ExtendedAd email(String email) {
+        this.email = email;
+        return this;
+    }
+
+    public ExtendedAd image(String image) {
+        this.image = image;
+        return this;
+    }
+
+    public ExtendedAd phone(String phone) {
+        this.phone = phone;
+        return this;
+    }
+
+    public ExtendedAd price(Integer price) {
+        this.price = price;
+        return this;
+    }
+
+    public ExtendedAd title(String title) {
+        this.title = title;
+        return this;
+    }
 }

@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.NewPassword;
-import ru.skypro.homework.dto.UpdateUser;
-import ru.skypro.homework.dto.User;
+import ru.skypro.homework.models.dto.NewPassword;
+import ru.skypro.homework.models.dto.UpdateUser;
+import ru.skypro.homework.models.dto.User;
 
 @Validated
 public interface UsersApi {
@@ -27,9 +27,6 @@ public interface UsersApi {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json",
                     schema = @Schema(implementation = User.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
-    @RequestMapping(value = "/users/me",
-            produces = {"application/json"},
-            method = RequestMethod.GET)
     ResponseEntity<User> getUser();
 
 
@@ -73,7 +70,7 @@ public interface UsersApi {
             method = RequestMethod.PATCH)
     ResponseEntity<Void> updateUserImage(@Parameter(description = "file detail")
                                          @Valid
-                                         @RequestPart("file") MultipartFile image);
+                                         @RequestPart("image") MultipartFile image);
 
 }
 
