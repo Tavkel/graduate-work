@@ -2,6 +2,7 @@ package ru.skypro.homework.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.skypro.homework.exceptions.ActionForbiddenException;
 import ru.skypro.homework.helpers.mappers.CommentMapper;
 import ru.skypro.homework.models.domain.CommentDomain;
 import ru.skypro.homework.models.dto.Comment;
@@ -35,34 +36,41 @@ public class CommentServiceImpl implements CommentService {
         return new Comments(comments.size(), comments);
     }
 
-    //todo refactor - too long
     @Override
-    public Comment createOrUpdateComment(CreateOrUpdateComment comment, Integer commentId, Integer adId) {
-        var ad = adService.getAdDomain(adId);
-        CommentDomain model = null;
-        if (commentId != null && commentId != 0) {
-            model = repository.findById(commentId).orElseThrow(() -> {
-                log.info("Comment with id {} was not found", commentId);
-                return new NoSuchElementException("Comment not found");
-            });
+    public Comment createOrUpdateComment(CreateOrUpdateComment comment,
+                                         Integer commentId,
+                                         Integer adId) {
+        CommentDomain model;
+        if(commentId != null && commentId != 0){
+            model = updateComment(comment, commentId);
+        } else {
+            model = createComment(comment);
         }
-        if (model == null) {
-            model = new CommentDomain().createdAt(
-                    LocalDateTime.now().toEpochSecond(
-                            ZoneId.systemDefault()
-                                    .getRules()
-                                    .getOffset(LocalDateTime.now())) * 1000
-            );
-        }
-        model.setAd(ad);
 
-        //todo remove stub
-        model.setUser(userService.getUserDomain(1));
+        model.setUser(userService.getUserDomain());
+        model.setAd(adService.getAdDomain(adId));
 
-        model = CommentMapper.createOrUpdateCommentToCommentDomain(comment, model);
-        model.setId(adId);
         var result = repository.save(model);
         return CommentMapper.commentDomainToComment(result);
+    }
+
+    private CommentDomain createComment(CreateOrUpdateComment comment) {
+        var result = CommentMapper.createOrUpdateCommentToCommentDomain(comment);
+        return result.createdAt(LocalDateTime.now().toEpochSecond(
+                ZoneId.systemDefault()
+                        .getRules()
+                        .getOffset(LocalDateTime.now())) * 1000);
+    }
+
+    private CommentDomain updateComment(CreateOrUpdateComment comment, Integer id) {
+        var model = repository.findById(id).orElseThrow(() -> {
+            log.info("Comment with id {} was not found", id);
+            return new NoSuchElementException("Comment not found");
+        });
+
+        if(!userService.isActionAllowed(model)) throw new ActionForbiddenException();
+
+        return model.text(comment.getText());
     }
 
     @Override
@@ -71,6 +79,9 @@ public class CommentServiceImpl implements CommentService {
             log.info("Comment with id {} was not found", commentId);
             return new NoSuchElementException("Comment not found");
         });
+
+        if(!userService.isActionAllowed(comment)) throw new ActionForbiddenException();
+
         repository.delete(comment);
     }
 }

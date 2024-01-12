@@ -2,11 +2,12 @@ package ru.skypro.homework.models.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import org.springframework.security.core.GrantedAuthority;
 
 /**
  * роль пользователя
  */
-public enum Roles {
+public enum Roles implements GrantedAuthority {
 
     USER("USER"),
 
@@ -32,5 +33,10 @@ public enum Roles {
             }
         }
         return null;
+    }
+
+    @Override
+    public String getAuthority() {
+        return value;
     }
 }

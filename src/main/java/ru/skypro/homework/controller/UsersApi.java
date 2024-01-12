@@ -70,7 +70,7 @@ public interface UsersApi {
             method = RequestMethod.PATCH)
     ResponseEntity<Void> updateUserImage(@Parameter(description = "file detail")
                                          @Valid
-                                         @RequestPart("file") MultipartFile image);
+                                         @RequestPart("image") MultipartFile image);
 
 }
 

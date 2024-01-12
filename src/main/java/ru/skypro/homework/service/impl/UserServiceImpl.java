@@ -1,70 +1,87 @@
 package ru.skypro.homework.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.helpers.mappers.UserMapper;
+import ru.skypro.homework.models.OwnedEntity;
 import ru.skypro.homework.models.domain.UserDomain;
 import ru.skypro.homework.models.dto.NewPassword;
 import ru.skypro.homework.models.dto.UpdateUser;
 import ru.skypro.homework.models.dto.User;
+import ru.skypro.homework.models.enums.Roles;
 import ru.skypro.homework.repositories.UserRepository;
+import ru.skypro.homework.security.CustomUserDetails;
+import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
 
-import java.util.NoSuchElementException;
+import java.io.IOException;
+import java.util.Objects;
 
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
+    private final ImageService imageService;
 
-    public UserServiceImpl(UserRepository repository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository repository, PasswordEncoder passwordEncoder, ImageService imageService) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
+        this.imageService = imageService;
     }
 
     @Override
-    public User getUser(Integer id) {
-        return UserMapper.userDomainToUser(getUserDomain(id));
+    public User getUser() {
+        return UserMapper.userDomainToUser(getUserDomain());
     }
 
     @Override
-    public UserDomain getUserDomain(Integer id) {
-        return repository.findById(id).orElseThrow(() -> {
-            log.info("User with id {} was not found", id);
-            return new NoSuchElementException("User not found");
-        });
+    public UserDomain getUserDomain() {
+        var principal = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return principal.getUser();
     }
 
     @Override
     public UpdateUser updateUser(UpdateUser user) {
-        //todo remove stub
-        var model = repository.findById(1).orElseThrow(() -> {
-            log.info("User with id {} was not found", 1);
-            return new NoSuchElementException("User not found");
-        });
+        var model = getUserDomain();
         model.firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .phone(user.getPhone());
-        var result =repository.save(model);
+        var result = repository.save(model);
         return UserMapper.userDomainToUpdateUser(result);
     }
 
     @Override
     public void updateUserPassword(NewPassword password) {
-        //todo remove stub
-        var model = repository.findById(1).orElseThrow(() -> {
-            log.info("User with id {} was not found", 1);
-            return new NoSuchElementException("User not found");
-        });
+        var model = getUserDomain();
         model.passwordHash(passwordEncoder.encode(password.getNewPassword()));
         repository.save(model);
     }
 
     @Override
     public void updateAvatar(MultipartFile file) {
-        //todo implement
+        var model = getUserDomain();
+        try {
+            var url = "/content/" + imageService.saveImage(file, model);
+            model.setImageUrl(url);
+        } catch (IOException e) {
+            throw new RuntimeException(e); //todo specify exception
+        }
+        repository.save(model);
+    }
+
+    @Override
+    public Integer getUserId() {
+        var user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return user.getId();
+    }
+
+    @Override
+    public boolean isActionAllowed(OwnedEntity entity) {
+        return Objects.equals(getUserId(), entity.getOwnerId()) ||
+                getUser().getRole() == Roles.ADMIN;
     }
 }

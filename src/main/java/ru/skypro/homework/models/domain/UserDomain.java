@@ -2,6 +2,7 @@ package ru.skypro.homework.models.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ru.skypro.homework.models.EntityWithImage;
 import ru.skypro.homework.models.enums.Roles;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.Objects;
 @Setter
 @Table(name = "users")
 @AllArgsConstructor
-public class UserDomain {
+public class UserDomain implements EntityWithImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -26,6 +27,8 @@ public class UserDomain {
     private String passwordHash;
     @OneToMany(mappedBy = "user")
     private List<AdDomain> ads;
+    @OneToMany(mappedBy = "user")
+    private List<CommentDomain> comments;
 
     public UserDomain() {
     }

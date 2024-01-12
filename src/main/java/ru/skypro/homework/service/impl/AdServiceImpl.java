@@ -3,6 +3,7 @@ package ru.skypro.homework.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.skypro.homework.exceptions.ActionForbiddenException;
 import ru.skypro.homework.helpers.mappers.AdMapper;
 import ru.skypro.homework.models.domain.AdDomain;
 import ru.skypro.homework.models.dto.Ad;
@@ -11,8 +12,10 @@ import ru.skypro.homework.models.dto.CreateOrUpdateAd;
 import ru.skypro.homework.models.dto.ExtendedAd;
 import ru.skypro.homework.repositories.AdRepository;
 import ru.skypro.homework.service.AdService;
+import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
 
+import java.io.IOException;
 import java.util.NoSuchElementException;
 
 @Service
@@ -20,10 +23,12 @@ import java.util.NoSuchElementException;
 public class AdServiceImpl implements AdService {
     private final AdRepository repository;
     private final UserService userService;
+    private final ImageService imageService;
 
-    public AdServiceImpl(AdRepository repository, UserService userService) {
+    public AdServiceImpl(AdRepository repository, UserService userService, ImageService imageService) {
         this.repository = repository;
         this.userService = userService;
+        this.imageService = imageService;
     }
 
     @Override
@@ -33,11 +38,8 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
-    public Ads getMyAds(Integer userId) {
-        //todo replace stub
-        userId  = 1;
-
-        var ads = repository.findByUserId(userId).stream().map(AdMapper::adDomainToAd).toList();
+    public Ads getMyAds() {
+        var ads = repository.findByUserId(userService.getUserId()).stream().map(AdMapper::adDomainToAd).toList();
         return new Ads(ads.size(), ads);
     }
 
@@ -60,31 +62,57 @@ public class AdServiceImpl implements AdService {
             log.info("Ad with id {} was not found", id);
             return new NoSuchElementException("Ad not found");
         });
+
+        if (!userService.isActionAllowed(ad)) throw new ActionForbiddenException();
+
+        var filename = ad.getImageUrl().substring(ad.getImageUrl().lastIndexOf("/") + 1);
+        try {
+            imageService.deleteImage(filename, AdDomain.class.getSimpleName());
+        } catch (IOException e) {
+            throw new RuntimeException(e); //todo specify exception
+        }
+
         repository.delete(ad);
     }
 
     @Override
-    public Ad createOrUpdateAd(CreateOrUpdateAd ad, Integer id) {
-        AdDomain model = null;
-        if (id != null && id != 0) {
-            model = repository.findById(id).orElseThrow(() -> {
-                log.info("Ad with id {} was not found", id);
-                return new NoSuchElementException("Ad not found");
-            });
+    public Ad createAd(CreateOrUpdateAd ad, MultipartFile image) {
+        var model = AdMapper.createOrUpdateAdToAdDomain(ad);
+        try {
+            var url = "/content/" + imageService.saveImage(image, model);
+            model.setUser(userService.getUserDomain());
+            model.setImageUrl(url);
+        } catch (IOException e) {
+            throw new RuntimeException(e); //todo specify exception
         }
-        model = AdMapper.createOrUpdateAdToAdDomain(ad, model);
 
-        //todo replace stub
-        var user = userService.getUserDomain(1);
-        model.setUser(user);
-
-        var result = repository.save(model);
-        return AdMapper.adDomainToAd(result);
+        return AdMapper.adDomainToAd(repository.save(model));
     }
 
     @Override
-    public byte[] updateImage(MultipartFile file) {
-        //todo implement
+    public Ad updateAd(CreateOrUpdateAd ad, Integer id) {
+        var model = repository.findById(id).orElseThrow(() -> {
+            log.info("Ad with id {} was not found", id);
+            return new NoSuchElementException("Ad not found");
+        });
+
+        if (!userService.isActionAllowed(model)) throw new ActionForbiddenException();
+
+        model.title(ad.getTitle())
+                .description(ad.getDescription())
+                .price(ad.getPrice());
+        return AdMapper.adDomainToAd(repository.save(model));
+    }
+
+    @Override
+    public byte[] updateImage(Integer id, MultipartFile file) {
+        var model = getAdDomain(id);
+        try {
+            model.setImageUrl( "/content/" + imageService.saveImage(file, model));
+        } catch (IOException e) {
+            throw new RuntimeException(e); //todo specify exception
+        }
+        repository.save(model);
         return new byte[0];
     }
 }

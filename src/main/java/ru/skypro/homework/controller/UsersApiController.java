@@ -1,8 +1,5 @@
 package ru.skypro.homework.controller;
 
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -33,8 +30,7 @@ public class UsersApiController implements UsersApi {
             produces = {"application/json"},
             method = RequestMethod.GET)
     public ResponseEntity<User> getUser() {
-        //todo remove stub
-        return new ResponseEntity<>(userService.getUser(1), HttpStatus.OK);
+        return new ResponseEntity<>(userService.getUser(), HttpStatus.OK);
     }
 
     public ResponseEntity<Void> setPassword(@Valid @RequestBody NewPassword password) {
@@ -46,8 +42,8 @@ public class UsersApiController implements UsersApi {
         return new ResponseEntity<>(userService.updateUser(body), HttpStatus.OK);
     }
 
-    public ResponseEntity<Void> updateUserImage(@RequestPart("file") MultipartFile image) {
-        //todo implement
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<Void> updateUserImage(@RequestPart MultipartFile image) {
+        userService.updateAvatar(image);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

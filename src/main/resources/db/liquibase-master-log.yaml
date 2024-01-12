@@ -5,5 +5,3 @@ databaseChangeLog:
       file: db/changesets/ads.sql
   - include:
       file: db/changesets/comments.sql
-  - include:
-      file: db/changesets/dev.sql
