@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - include:
+      file: db/changesets/db_init_TEST.sql
+  - include:
+      file: db/changesets/users_TEST.sql
+  - include:
+      file: db/changesets/ads_TEST.sql
+  - include:
+      file: db/changesets/comments_TEST.sql
