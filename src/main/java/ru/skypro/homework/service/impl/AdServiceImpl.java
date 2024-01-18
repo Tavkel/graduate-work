@@ -11,6 +11,7 @@ import ru.skypro.homework.models.dto.Ads;
 import ru.skypro.homework.models.dto.CreateOrUpdateAd;
 import ru.skypro.homework.models.dto.ExtendedAd;
 import ru.skypro.homework.repositories.AdRepository;
+import ru.skypro.homework.security.utility.PermissionChecker;
 import ru.skypro.homework.service.AdService;
 import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
@@ -63,16 +64,18 @@ public class AdServiceImpl implements AdService {
             return new NoSuchElementException("Ad not found");
         });
 
-        if (!userService.isActionAllowed(ad)) throw new ActionForbiddenException();
+        var user = userService.getUserDomain();
+        if (!PermissionChecker.isActionAllowed(user, ad)) throw new ActionForbiddenException();
+
+        repository.delete(ad);
 
         var filename = ad.getImageUrl().substring(ad.getImageUrl().lastIndexOf("/") + 1);
         try {
             imageService.deleteImage(filename, AdDomain.class.getSimpleName());
         } catch (IOException e) {
-            throw new RuntimeException(e); //todo specify exception
+            log.error("failed to delete file {}", filename);
         }
 
-        repository.delete(ad);
     }
 
     @Override
@@ -96,11 +99,12 @@ public class AdServiceImpl implements AdService {
             return new NoSuchElementException("Ad not found");
         });
 
-        if (!userService.isActionAllowed(model)) throw new ActionForbiddenException();
+        var user = userService.getUserDomain();
+        if (!PermissionChecker.isActionAllowed(user, model)) throw new ActionForbiddenException();
 
-        model.title(ad.getTitle())
-                .description(ad.getDescription())
-                .price(ad.getPrice());
+        model.title(ad.getTitle() != null? ad.getTitle() : model.getTitle())
+                .description(ad.getDescription() != null? ad.getDescription() : model.getDescription())
+                .price(ad.getPrice() != null? ad.getPrice() : model.getPrice());
         return AdMapper.adDomainToAd(repository.save(model));
     }
 

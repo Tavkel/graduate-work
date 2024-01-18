@@ -1,20 +1,18 @@
 package ru.skypro.homework.models.domain;
 
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import ru.skypro.homework.models.EntityWithImage;
 import ru.skypro.homework.models.OwnedEntity;
 
 import java.util.List;
+import java.util.Objects;
 
 @Entity
-@ToString
-@EqualsAndHashCode
 @Setter
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "ads")
 public class AdDomain implements OwnedEntity, EntityWithImage {
     @Id
@@ -29,9 +27,6 @@ public class AdDomain implements OwnedEntity, EntityWithImage {
     private Integer price;
     private String title;
     private String description;
-
-    public AdDomain() {
-    }
 
     public AdDomain id(Integer id) {
         this.id = id;
@@ -70,5 +65,29 @@ public class AdDomain implements OwnedEntity, EntityWithImage {
 
     public Integer getOwnerId() {
         return user.getId();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AdDomain adDomain = (AdDomain) o;
+        return Objects.equals(imageUrl, adDomain.imageUrl) && Objects.equals(price, adDomain.price) && Objects.equals(title, adDomain.title) && Objects.equals(description, adDomain.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(imageUrl, price, title, description);
+    }
+
+    @Override
+    public String toString() {
+        return "AdDomain{" +
+                "id=" + id +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", price=" + price +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                '}';
     }
 }

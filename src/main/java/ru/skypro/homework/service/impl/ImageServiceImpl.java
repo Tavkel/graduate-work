@@ -17,7 +17,7 @@ public class ImageServiceImpl implements ImageService {
     private final String imageDirectory;
 
     public ImageServiceImpl(@Value("${image-directory}") String imageDirectory) {
-        this.imageDirectory = imageDirectory;
+        this.imageDirectory = "./" + imageDirectory;
     }
 
     @Override

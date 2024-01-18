@@ -11,6 +11,8 @@ import lombok.*;
 @EqualsAndHashCode
 @Setter
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class CreateOrUpdateAd {
 
     @Schema(description = "заголовок объявления")

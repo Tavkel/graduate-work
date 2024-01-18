@@ -5,11 +5,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.skypro.homework.models.enums.Roles;
 
 @Data
 @Valid
+@AllArgsConstructor
+@NoArgsConstructor
 public class Register {
     @Schema(description = "логин")
     @Size(min = 4, max = 32)
