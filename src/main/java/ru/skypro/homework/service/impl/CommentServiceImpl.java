@@ -46,9 +46,9 @@ public class CommentServiceImpl implements CommentService {
             model = updateComment(comment, commentId);
         } else {
             model = createComment(comment);
+            model.setUser(userService.getUserDomain());
         }
 
-        model.setUser(userService.getUserDomain());
         model.setAd(adService.getAdDomain(adId));
 
         var result = repository.save(model);

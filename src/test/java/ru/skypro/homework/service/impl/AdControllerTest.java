@@ -18,10 +18,7 @@ import ru.skypro.homework.models.dto.*;
 import ru.skypro.homework.models.enums.Roles;
 import ru.skypro.homework.repositories.AdRepository;
 import ru.skypro.homework.repositories.CommentRepository;
-import ru.skypro.homework.service.AdService;
 import ru.skypro.homework.service.AuthService;
-import ru.skypro.homework.service.ImageService;
-import ru.skypro.homework.service.UserService;
 
 import javax.sql.DataSource;
 import java.io.File;
@@ -33,15 +30,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class AdControllerTest {
     @Autowired
     TestRestTemplate restTemplate;
-
-    @Autowired
-    AdService adService;
-
-    @Autowired
-    UserService userService;
-
-    @Autowired
-    ImageService imageService;
 
     @Autowired
     AdRepository adRepository;
